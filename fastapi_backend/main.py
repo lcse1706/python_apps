@@ -7,7 +7,7 @@ from pydantic import BaseModel
 app = FastAPI()
 
 # Konfiguracja bazy danych PostgreSQL
-DATABASE_URL = "postgresql://postgres:postgres@localhost/postgres"
+DATABASE_URL = "postgresql://postgres:postgres@localhost:2022/postgres"
 
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(bind=engine)
