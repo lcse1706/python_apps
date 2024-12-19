@@ -3,19 +3,19 @@ from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.orm import sessionmaker, declarative_base, Session
 from pydantic import BaseModel
 
-# Konfiguracja FastAPI
+# FastAPI Configuration
 app = FastAPI()
 
-# Konfiguracja bazy danych PostgreSQL
+# PostgreSQL configuration db       
 DATABASE_URL = "postgresql://postgres:postgres@localhost:2022/postgres"
 
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(bind=engine)
 
-# Deklaracja bazowa dla SQLAlchemy
+# Base declaration for SQLAlchemy
 Base = declarative_base()
 
-# Model użytkownika
+# User Model
 class User(Base):
     __tablename__ = "users"
 
@@ -23,15 +23,15 @@ class User(Base):
     name = Column(String, index=True)
     email = Column(String, unique=True, index=True)
 
-# Tworzenie tabeli w bazie danych
+# Creating tables in db
 Base.metadata.create_all(bind=engine)
 
-# Schemat danych użytkownika
+# User Data Schema
 class UserSchema(BaseModel):
     name: str
     email: str
 
-# Funkcja do tworzenia sesji bazy danych
+# Function to create db session
 def get_db():
     db = SessionLocal()
     try:
@@ -39,7 +39,7 @@ def get_db():
     finally:
         db.close()
 
-# Endpoint: Dodanie użytkownika
+# Endpoint: Add User
 @app.post("/users/")
 def create_user(user: UserSchema, db: Session = Depends(get_db)):
     db_user = User(name=user.name, email=user.email)
@@ -48,12 +48,12 @@ def create_user(user: UserSchema, db: Session = Depends(get_db)):
     db.refresh(db_user)
     return db_user
 
-# Endpoint: Pobranie wszystkich użytkowników
+# Endpoint: Get all users
 @app.get("/users/")
 def get_users(db: Session = Depends(get_db)):
     return db.query(User).all()
 
-# Endpoint: Usunięcie użytkownika
+# Endpoint: Delete User
 @app.delete("/users/{user_id}")
 def delete_user(user_id: int, db: Session = Depends(get_db)):
     db_user = db.query(User).filter(User.id == user_id).first()
