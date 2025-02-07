@@ -14,6 +14,8 @@ root.title("PyChat")
 root.geometry("400x400")
 
 
+entry = tk.Entry(root, width=40)
+entry.pack(pady=5)
 
 
 
