@@ -17,6 +17,21 @@ root.geometry("400x400")
 entry = tk.Entry(root, width=40)
 entry.pack(pady=5)
 
+def sendMessage(message):
+  if entry.get():
+    messages_col.insert_one({"text": entry.get()})
+    entry.delete(0, tk.END)
+    
+send_button = tk.Button(root, text="Send", command=lambda: sendMessage(entry.get()))
+send_button.pack(pady=5)
+
+messages_label = tk.Label(root, text="Messages:\n", justify="left")
+messages_label.pack(pady=5)
+
+messages = tk.Text(root, width=50, height=20)
+messages.pack(pady=5)
+
+
 
 
 root.mainloop()
