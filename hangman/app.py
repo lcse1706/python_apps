@@ -1,7 +1,7 @@
 import tkinter as tk
 import random
 
-WORDS = ["python", "tkinter", "developer", "hangman", "programming"]
+WORDS = ["python", "tkinter", "developer", "hangman", "programming", "code", "computer", "software", "django", "javascript"],
 word = random.choice(WORDS).lower()
 guessed_letters = set()
 attempts = 6
