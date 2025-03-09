@@ -1,74 +1,56 @@
 import tkinter as tk
-import random
+from game_logic import initialize_game, update_display_word, check_letter, get_hangman_stage, is_won, is_lost, game_state
 
-WORDS = ["python", "tkinter", "developer", "hangman", "programming", "code", "computer", "software", "django", "javascript"],
-word = random.choice(WORDS).lower()
-guessed_letters = set()
-attempts = 6
+initialize_game()
 
-def update_word_display():
-    displayed = " ".join([letter if letter in guessed_letters else "_" for letter in word])
-    word_display.set(displayed)
+def update_ui():
+    word_display.set(update_display_word())
+    hangman_label.config(text=get_hangman_stage())
+    attempts_label.config(text=f"Attempts left: {game_state['attempts']}")
 
-def check_letter(event):
-    global attempts
+def check_letter_event(event):
     letter = entry.get().lower()
     entry.delete(0, tk.END)
 
-    if len(letter) != 1 or not letter.isalpha():
-        message_label.config(text="Enter a single letter!")
-        return
+    message = check_letter(letter)
+    message_label.config(text=message)
 
-    if letter in guessed_letters:
-        message_label.config(text="You already guessed that letter!")
-        return
+    update_ui()
 
-    guessed_letters.add(letter)
-
-    if letter in word:
-        message_label.config(text="Correct!")
-    else:
-        attempts -= 1
-        message_label.config(text="Wrong!")
-
-    update_word_display()
-    attempts_label.config(text=f"Attempts left: {attempts}")
-
-    if "_" not in word_display.get():
+    if is_won():
         message_label.config(text="You won!")
-    elif attempts == 0:
-        message_label.config(text=f"Game Over! Word was: {word}")
+    elif is_lost():
+        message_label.config(text=f"Game Over! Word was: {game_state['word']}")
 
 def restart_game():
-    global word, guessed_letters, attempts
-    word = random.choice(WORDS).lower()
-    guessed_letters.clear()
-    attempts = 6
-    update_word_display()
-    attempts_label.config(text=f"Attempts left: {attempts}")
+    initialize_game()
     message_label.config(text="")
+    update_ui()
 
 # GUI setup
 root = tk.Tk()
 root.title("Hangman Game")
+root.geometry("400x450")
 
 word_display = tk.StringVar()
-update_word_display()
+hangman_label = tk.Label(root, text=get_hangman_stage(), font=("Courier", 12))
+hangman_label.pack(pady=10)
 
 label = tk.Label(root, textvariable=word_display, font=("Arial", 20))
 label.pack(pady=20)
 
 entry = tk.Entry(root, font=("Arial", 14))
 entry.pack()
-entry.bind("<Return>", check_letter)
+entry.bind("<Return>", check_letter_event)
 
 message_label = tk.Label(root, text="", font=("Arial", 14))
 message_label.pack(pady=10)
 
-attempts_label = tk.Label(root, text=f"Attempts left: {attempts}", font=("Arial", 14))
+attempts_label = tk.Label(root, text=f"Attempts left: {game_state['attempts']}", font=("Arial", 14))
 attempts_label.pack()
 
 restart_button = tk.Button(root, text="Restart", command=restart_game, font=("Arial", 14))
 restart_button.pack(pady=10)
 
+update_ui()
 root.mainloop()
