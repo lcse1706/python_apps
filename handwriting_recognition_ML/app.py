@@ -106,7 +106,8 @@ model = Sequential([
 ])
 
 # Compile the model
-model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+
 
 # Train the model
 model.fit(X_train, y_train_padded, validation_data=(X_val, y_val_padded), epochs=10, batch_size=64)
